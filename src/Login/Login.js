@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
-import LoginForm from './LoginForm.js';
+import React, { Component } from "react";
+import LoginForm from "./LoginForm.js";
+import { LoginCardS, UserFormSD } from "./LoginStyles";
 
 class Login extends React.Component {
-
   render() {
-      return(
+    return (
+      <LoginCardS>
         <LoginForm></LoginForm>
-      );
+      </LoginCardS>
+    );
   }
 }
-
 
 export default Login;
