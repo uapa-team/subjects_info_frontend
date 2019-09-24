@@ -1,5 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import { Table, InputNumber, Button } from "antd";
+import auth from '../auth'
 
 class SubjectsForm extends React.Component {
   constructor(props) {
@@ -90,15 +91,25 @@ class SubjectsForm extends React.Component {
     console.log(this.data);
   };
 
+  logOut = () => {
+    auth.logout(() => {
+      this.props.history.push('/login')
+    })
+  };
+
   render() {
     return (
       <div>
+        <div><h1>Nombre de la persona</h1></div>
         <Table
           columns={this.columns}
           dataSource={this.state.dataSource}
           bordered
           size="small"
         />
+        <Button onClick={this.logOut} type="primary" style={{}}>
+          Cerrar Sesión
+        </Button>
         <Button onClick={this.submitInfo} type="primary" style={{}}>
           Terminar
         </Button>

@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import LoginForm from "./LoginForm.js";
-import { LoginCardS, UserFormSD } from "./LoginStyles";
+import { LoginCardS } from "./LoginStyles";
 
 class Login extends React.Component {
   render() {
