@@ -1,13 +1,19 @@
 import React from "react";
 import { Form, Icon, Input, Button } from "antd";
 import { UserFormSD } from "./LoginStyles";
+import auth from '../auth'
+import { withRouter } from "react-router-dom"
 
 
 import axios from 'axios';
 
 class LoginForm extends React.Component {
-  handleSubmit = e => {
+  constructor(props) {
+    super(props);
+    this.logIn = this.logIn.bind(this);
+  }
 
+  handleSubmit = () => {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
@@ -16,16 +22,20 @@ class LoginForm extends React.Component {
             username: values.username,
             password: values.password
           }
-        }).then((response) => {
-          console.log(response)
-          //Re-direct to form.
-
+        }).then((response) => { //Add verification (200).
+          this.logIn();
         }).catch((error) => {
           console.log(error);
         });
-
       }
     });
+  };
+
+  logIn = () => {
+    auth.login(() => {
+      console.log(this.props)
+      this.props.history.push('/form');
+    })
   };
 
   render() {
@@ -70,7 +80,6 @@ class LoginForm extends React.Component {
               type="primary"
               onClick={this.handleSubmit}
               className="login-form-button"
-
             >
               Acceder
             </Button>
@@ -83,4 +92,4 @@ class LoginForm extends React.Component {
 
 const WrappedLoginForm = Form.create({ name: "normal_login" })(LoginForm);
 
-export default WrappedLoginForm;
+export default withRouter(WrappedLoginForm);
