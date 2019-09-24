@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Icon, Input, Button } from "antd";
+import { Form, Icon, Input, Button, Row, Col } from "antd";
 import { UserFormSD } from "./LoginStyles";
 import auth from '../auth'
 import { withRouter } from "react-router-dom"
@@ -23,6 +23,8 @@ class LoginForm extends React.Component {
             password: values.password
           }
         }).then((response) => { //Add verification (200).
+          localStorage.setItem('name', response.data);
+          console.log(response)
           this.logIn();
         }).catch((error) => {
           console.log(error);
@@ -41,51 +43,53 @@ class LoginForm extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form className="login-form">
-        <UserFormSD>
-          <b>Usuario:</b>
-          <Form.Item>
-            {getFieldDecorator("username", {
-              rules: [
-                {
-                  required: true,
-                  message: "Ingrese su usuario del SIA"
-                }
-              ]
-            })(
-              <Input
-                prefix={
-                  <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
-                }
-              />
-            )}
-          </Form.Item>
-          <b>Contraseña:</b>
-          <Form.Item>
-            {getFieldDecorator("password", {
-              rules: [
-                { required: true, message: "Ingrese la contraseña del SIA" }
-              ]
-            })(
-              <Input
-                prefix={
-                  <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
-                }
-                type="password"
-              />
-            )}
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              onClick={this.handleSubmit}
-              className="login-form-button"
-            >
-              Acceder
+      <Row><Col span={20}>
+        <Form className="login-form">
+          <UserFormSD>
+            <b>Usuario:</b>
+            <Form.Item>
+              {getFieldDecorator("username", {
+                rules: [
+                  {
+                    required: true,
+                    message: "Ingrese su usuario del SIA"
+                  }
+                ]
+              })(
+                <Input
+                  prefix={
+                    <Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />
+                  }
+                />
+              )}
+            </Form.Item>
+            <b>Contraseña:</b>
+            <Form.Item>
+              {getFieldDecorator("password", {
+                rules: [
+                  { required: true, message: "Ingrese la contraseña del SIA" }
+                ]
+              })(
+                <Input
+                  prefix={
+                    <Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />
+                  }
+                  type="password"
+                />
+              )}
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                onClick={this.handleSubmit}
+                className="login-form-button"
+              >
+                Acceder
             </Button>
-          </Form.Item>
-        </UserFormSD>
-      </Form>
+            </Form.Item>
+          </UserFormSD>
+        </Form>
+      </Col></Row>
     );
   }
 }

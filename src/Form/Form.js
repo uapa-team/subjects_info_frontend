@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, InputNumber, Button } from "antd";
+import { Table, InputNumber, Button, Row, Col } from "antd";
 import auth from '../auth'
 
 class SubjectsForm extends React.Component {
@@ -81,10 +81,6 @@ class SubjectsForm extends React.Component {
     oldData[type] = e;
     newData.splice(record.key, 1, oldData);
     this.data = newData;
-    // console.log(e.target.value);
-    // this.setState({
-    //   dataSource: newData
-    // });
   };
 
   submitInfo = () => {
@@ -93,6 +89,7 @@ class SubjectsForm extends React.Component {
 
   logOut = () => {
     auth.logout(() => {
+      localStorage.clear();
       this.props.history.push('/login')
     })
   };
@@ -100,17 +97,21 @@ class SubjectsForm extends React.Component {
   render() {
     return (
       <div>
-        <div><h1>Nombre de la persona</h1></div>
-        <Table
-          columns={this.columns}
-          dataSource={this.state.dataSource}
-          bordered
-          size="small"
-        />
+        <div><h1>Bienvenido, {localStorage.getItem('name')}</h1></div>
+        <Row type="flex" justify="center">
+          <Col span={20}>
+            <Table
+              columns={this.columns}
+              dataSource={this.state.dataSource}
+              bordered
+              size="small"
+            />
+          </Col>
+        </Row>
         <Button onClick={this.logOut} type="primary" style={{}}>
           Cerrar Sesión
         </Button>
-        <Button onClick={this.submitInfo} type="primary" style={{}}>
+        <Button onClick={this.submitInfo} type="default" style={{}}>
           Terminar
         </Button>
       </div>
