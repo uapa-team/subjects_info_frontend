@@ -2,12 +2,28 @@ import React, { Component } from "react";
 import { Form, Icon, Input, Button } from "antd";
 import { UserFormSD } from "./LoginStyles";
 
+
+import axios from 'axios';
+
 class LoginForm extends React.Component {
   handleSubmit = e => {
-    e.preventDefault();
+
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
+        axios.post('http://localhost:8000/subjects_hours/login', {
+          params: {
+            username: values.username,
+            password: values.password
+          }
+        }).then((response) => {
+          console.log(response)
+          //Re-direct to form.
+
+        }).catch((error) => {
+          console.log(error);
+        });
+
       }
     });
   };
@@ -15,7 +31,7 @@ class LoginForm extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSubmit} className="login-form">
+      <Form className="login-form">
         <UserFormSD>
           <b>Usuario:</b>
           <Form.Item>
@@ -52,8 +68,9 @@ class LoginForm extends React.Component {
           <Form.Item>
             <Button
               type="primary"
-              htmlType="submit"
+              onClick={this.handleSubmit}
               className="login-form-button"
+
             >
               Acceder
             </Button>
