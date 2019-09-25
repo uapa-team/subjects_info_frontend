@@ -88,7 +88,7 @@ class SubjectsForm extends React.Component {
 
   submitInfo = () => {
     console.log(this.state.dataSource)
-    axios.post('http://localhost:8000/subjects_hours/survey_view', {
+    axios.post('http://localhost:8000/subjects_hours/submit_form', {
       username: window.localStorage.getItem("username"),
       subjects: this.state.dataSource
     }).then((response) => {
