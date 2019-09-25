@@ -4,8 +4,7 @@ import { UserFormSD } from "./LoginStyles";
 import auth from '../auth'
 import { withRouter } from "react-router-dom"
 
-
-import axios from 'axios';
+import axios from 'axios'
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -18,13 +17,11 @@ class LoginForm extends React.Component {
       if (!err) {
         console.log("Received values of form: ", values);
         axios.post('http://localhost:8000/subjects_hours/login', {
-          params: {
-            username: values.username,
-            password: values.password
-          }
+          username: values.username,
+          password: values.password
         }).then((response) => { //Add verification (200).
           localStorage.setItem('name', response.data);
-          console.log(response)
+          localStorage.setItem('username', values.username);
           this.logIn();
         }).catch((error) => {
           console.log(error);
@@ -80,7 +77,7 @@ class LoginForm extends React.Component {
             </Form.Item>
             <Form.Item>
               <Button
-                type="primary"
+                type="submit"
                 onClick={this.handleSubmit}
                 className="login-form-button"
               >
