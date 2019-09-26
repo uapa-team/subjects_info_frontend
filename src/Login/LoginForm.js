@@ -16,7 +16,7 @@ class LoginForm extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        axios.post('http://localhost:8000/subjects_hours/login', {
+        axios.post('http://168.176.26.182:8000/subjects_hours/login', {
           username: values.username,
           password: values.password
         }).then((response) => { //Add verification (200).

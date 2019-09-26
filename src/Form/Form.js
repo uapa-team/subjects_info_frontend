@@ -88,7 +88,7 @@ class SubjectsForm extends React.Component {
 
   submitInfo = () => {
     console.log(this.state.dataSource)
-    axios.post('http://localhost:8000/subjects_hours/submit_form', {
+    axios.post('http://168.176.26.182:8000/subjects_hours/submit_form', {
       username: window.localStorage.getItem("username"),
       subjects: this.state.dataSource
     }).then((response) => {
@@ -110,7 +110,7 @@ class SubjectsForm extends React.Component {
   };
 
   componentDidMount() {
-    axios.post('http://localhost:8000/subjects_hours/survey_view', {
+    axios.post('http://168.176.26.182:8000/subjects_hours/survey_view', {
       username: window.localStorage.getItem("username"),
     }).then((response) => {
       console.log(response.data.subjects);
