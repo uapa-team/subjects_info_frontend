@@ -3,10 +3,9 @@ import { Switch } from 'react-router-dom'
 
 import Form from "./Form/Form";
 
-import LoginScreen from "./Login2/LoginScreen"
+import LoginScreen from "./Login/LoginScreen"
 
 import { ProtectedRoute } from './ProtectedRoute'
-import { LoginRoute } from './LoginRoute'
 
 export default props => (
     <Switch>
