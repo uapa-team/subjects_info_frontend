@@ -1,7 +1,8 @@
 import React from "react";
-import { Table, InputNumber, Button, Row, Col } from "antd";
-import auth from '../auth'
-import axios from 'axios'
+import { Form, Table, InputNumber, Button, Row, Col } from "antd";
+import auth from "../auth";
+import axios from "axios";
+import { withRouter } from "react-router-dom";
 
 class SubjectsForm extends React.Component {
   constructor(props) {
@@ -26,7 +27,6 @@ class SubjectsForm extends React.Component {
             min={0}
             style={{ width: "100%" }}
             onChange={e => this.handleAdd(e, record, text, "dedication_hours")}
-
           />
         )
       },
@@ -87,62 +87,85 @@ class SubjectsForm extends React.Component {
   };
 
   submitInfo = () => {
-    console.log(this.state.dataSource)
-    axios.post('http://168.176.37.49:8000/subjects_hours/submit_form', {
-      username: window.localStorage.getItem("username"),
-      subjects: this.state.dataSource
-    }).then((response) => {
-      window.alert('¡Muchas gracias!')
-      auth.logout(() => {
-        localStorage.clear();
-        this.props.history.push('/')
+    console.log(this.state.dataSource);
+    axios
+      .post("http://168.176.37.49:8000/subjects_hours/submit_form", {
+        username: window.localStorage.getItem("username"),
+        subjects: this.state.dataSource
       })
-    }).catch((error) => {
-      console.log(error);
-    });
+      .then(response => {
+        window.alert("¡Muchas gracias!");
+        auth.logout(() => {
+          localStorage.clear();
+          this.props.history.push("/");
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   logOut = () => {
     auth.logout(() => {
       localStorage.clear();
-      this.props.history.push('/')
-    })
+      this.props.history.push("/");
+    });
   };
 
   componentDidMount() {
-    axios.post('http://168.176.37.49:8000/subjects_hours/survey_view', {
-      username: window.localStorage.getItem("username"),
-    }).then((response) => {
-      console.log(response.data.subjects);
-      this.setState({
-        dataSource: response.data.subjects
+    axios
+      .post("http://168.176.37.49:8000/subjects_hours/survey_view", {
+        username: window.localStorage.getItem("username")
       })
-    }).catch((error) => {
-      console.log(error);
-    });
+      .then(response => {
+        console.log(response.data.subjects);
+        this.setState({
+          dataSource: response.data.subjects
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   render() {
     return (
       <div>
         <Row type="flex" justify="center">
-          <div style={{ marginTop: 20 }}><h1>Bienvenido, {localStorage.getItem('name')}</h1></div>
+          <div style={{ marginTop: 20 }}>
+            <h1>Bienvenido, {localStorage.getItem("name")}</h1>
+          </div>
         </Row>
-        <Row><Col span={20} offset={2}><ul>
-          <li><b>Número de horas de dedicación presencial: </b>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit, cras elementum accumsan ac tempor tellus,
-            euismod eget est suscipit consequat mattis. Molestie mattis litora vestibulum ad euismod placerat
-            tellus justo proin a, ligula vehicula potenti metus cursus eu habitasse dictum.
-          </li>
-          <li><b>Número de horas de acompañamiento: </b>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit, cras elementum accumsan ac tempor tellus,
-            euismod eget est suscipit consequat mattis. Molestie mattis litora vestibulum ad euismod placerat
-          tellus justo proin a, ligula vehicula potenti metus cursus eu habitasse dictum.</li>
-          <li><b>Número de horas de trabajo autónomo: </b>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit, cras elementum accumsan ac tempor tellus,
-            euismod eget est suscipit consequat mattis. Molestie mattis litora vestibulum ad euismod placerat
-          tellus justo proin a, ligula vehicula potenti metus cursus eu habitasse dictum.</li>
-        </ul></Col></Row>
+        <Row>
+          <Col span={20} offset={2}>
+            <ul>
+              <li>
+                <b>Número de horas de dedicación presencial: </b>
+                Lorem ipsum dolor sit amet consectetur adipiscing elit, cras
+                elementum accumsan ac tempor tellus, euismod eget est suscipit
+                consequat mattis. Molestie mattis litora vestibulum ad euismod
+                placerat tellus justo proin a, ligula vehicula potenti metus
+                cursus eu habitasse dictum.
+              </li>
+              <li>
+                <b>Número de horas de acompañamiento: </b>
+                Lorem ipsum dolor sit amet consectetur adipiscing elit, cras
+                elementum accumsan ac tempor tellus, euismod eget est suscipit
+                consequat mattis. Molestie mattis litora vestibulum ad euismod
+                placerat tellus justo proin a, ligula vehicula potenti metus
+                cursus eu habitasse dictum.
+              </li>
+              <li>
+                <b>Número de horas de trabajo autónomo: </b>
+                Lorem ipsum dolor sit amet consectetur adipiscing elit, cras
+                elementum accumsan ac tempor tellus, euismod eget est suscipit
+                consequat mattis. Molestie mattis litora vestibulum ad euismod
+                placerat tellus justo proin a, ligula vehicula potenti metus
+                cursus eu habitasse dictum.
+              </li>
+            </ul>
+          </Col>
+        </Row>
         <Row type="flex" justify="center">
           <Col span={20}>
             <Table
@@ -155,17 +178,21 @@ class SubjectsForm extends React.Component {
         </Row>
 
         <Row type="flex" justify="center" gutter={16}>
-          <Col><Button onClick={this.logOut} type="danger" style={{}}>
-            Cerrar sin guardar
-            </Button></Col>
-          <Col><Button onClick={this.submitInfo} type="primary" style={{}}>
-            Terminar
+          <Col>
+            <Button onClick={this.logOut} type="danger" style={{}}>
+              Cerrar sin guardar
+            </Button>
+          </Col>
+          <Col>
+            <Button onClick={this.submitInfo} type="primary" style={{}}>
+              Terminar
             </Button>
           </Col>
         </Row>
-      </div >
+      </div>
     );
   }
 }
 
-export default SubjectsForm;
+//export default SubjectsForm;
+export default withRouter(Form.create({ name: "main_form" })(SubjectsForm));
