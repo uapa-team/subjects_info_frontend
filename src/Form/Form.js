@@ -3,6 +3,7 @@ import { Form, Table, InputNumber, Button, Row, Col } from "antd";
 import auth from "../auth";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
+import ListBodyWrapper from "antd/lib/transfer/renderListBody";
 
 class SubjectsForm extends React.Component {
   constructor(props) {
@@ -113,14 +114,19 @@ class SubjectsForm extends React.Component {
   };
 
   componentDidMount() {
-    axios
-      .post("http://168.176.37.49:8000/subjects_hours/survey_view", {
-        username: window.localStorage.getItem("username")
-      })
+    fetch("http://localhost:8000/subjects_hours/get_schedule", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Token " + localStorage.getItem("jwt")
+      }
+    })
+      .then(res => res.json())
       .then(response => {
-        console.log(response.data.subjects);
+        console.log(response.subjects);
         this.setState({
-          dataSource: response.data.subjects
+          dataSource: response.subjects
         });
       })
       .catch(error => {

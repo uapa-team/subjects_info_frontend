@@ -30,6 +30,7 @@ class LoginForm extends React.Component {
               } else if (response.status === 200) {
                 console.log("Inicio de sesión exitoso.");
                 let res = await response.json();
+                localStorage.setItem("name", res["name"]);
                 localStorage.setItem("jwt", res["token"]);
                 this.logIn();
               } else {
