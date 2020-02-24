@@ -89,11 +89,17 @@ class SubjectsForm extends React.Component {
 
   submitInfo = () => {
     console.log(this.state.dataSource);
-    axios
-      .post("http://168.176.37.49:8000/subjects_hours/submit_form", {
-        username: window.localStorage.getItem("username"),
+    fetch("http://localhost:8000/subjects_hours/submit_form", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Token " + localStorage.getItem("jwt")
+      },
+      body: JSON.stringify({
         subjects: this.state.dataSource
       })
+    })
       .then(response => {
         window.alert("¡Muchas gracias!");
         auth.logout(() => {
@@ -124,10 +130,13 @@ class SubjectsForm extends React.Component {
     })
       .then(res => res.json())
       .then(response => {
-        console.log(response.subjects);
-        this.setState({
-          dataSource: response.subjects
-        });
+        if (response.subjects.length === 0) {
+          this.props.history.push("/schedule");
+        } else {
+          this.setState({
+            dataSource: response.subjects
+          });
+        }
       })
       .catch(error => {
         console.log(error);
@@ -200,5 +209,4 @@ class SubjectsForm extends React.Component {
   }
 }
 
-//export default SubjectsForm;
 export default withRouter(Form.create({ name: "main_form" })(SubjectsForm));
