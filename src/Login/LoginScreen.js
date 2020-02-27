@@ -1,6 +1,7 @@
 import React from "react";
 import Login from "./LoginForm"
 import { Row, Col } from 'antd';
+import { withRouter } from "react-router-dom";
 
 class LoginScreen extends React.Component {
     render() {
@@ -17,4 +18,4 @@ class LoginScreen extends React.Component {
     }
 }
 
-export default LoginScreen;
+export default withRouter(LoginScreen);

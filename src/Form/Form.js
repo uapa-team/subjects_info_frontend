@@ -1,9 +1,8 @@
 import React from "react";
-import { Form, Table, InputNumber, Button, Row, Col } from "antd";
-import auth from "../auth";
-import axios from "axios";
+import { Form, Table, InputNumber, Button, Row, Col, Popconfirm, Icon } from "antd";
+import auth from "../Routes/auth";
 import { withRouter } from "react-router-dom";
-import ListBodyWrapper from "antd/lib/transfer/renderListBody";
+import { PrimButton } from "./PrimButton";
 
 class SubjectsForm extends React.Component {
   constructor(props) {
@@ -55,20 +54,77 @@ class SubjectsForm extends React.Component {
       }
     ];
 
+    this.columnsNew = [
+      {
+        title: "Nombre de la materia",
+        dataIndex: "subject_name",
+        render: (record, text) => (
+          <InputNumber
+            min={0}
+            style={{ width: "100%" }}
+            onChange={e => this.handleAdd(e, record, text, "subject_name")}
+          />
+        )
+      },
+      {
+        title: "Número de horas de dedicación presencial",
+        dataIndex: "dedication_hours",
+        render: (record, text) => (
+          <InputNumber
+            min={0}
+            style={{ width: "100%" }}
+            onChange={e => this.handleAdd(e, record, text, "dedication_hours")}
+          />
+        )
+      },
+      {
+        title: "Número de horas de trabajo autónomo",
+        dataIndex: "autonomous_hours",
+        render: (record, text, dataIndex) => (
+          <InputNumber
+            min={0}
+            style={{ width: "100%" }}
+            onChange={e => this.handleAdd(e, record, text, "autonomous_hours")}
+          />
+        )
+      },
+      {
+        title: "Número de horas de acompañamiento",
+        dataIndex: "accompaniment",
+        render: (record, text, dataIndex) => (
+          <InputNumber
+            min={0}
+            style={{ width: "100%" }}
+            onChange={e => this.handleAdd(e, record, text, "accompaniment")}
+          />
+        )
+      },
+      {
+        title: "Eliminar",
+        dataIndex: "operation",
+        width: "7%",
+        render: (text, record) =>
+          this.state.dataSource.length >= 1 ? (
+            <Popconfirm
+              title="¿Está seguro?"
+              okText="Sí"
+              cancelText="No"
+              onConfirm={() => this.handleDeleteOne(record.key)}
+            >
+              {/* eslint-disable-next-line */}
+              <Icon type="delete" />
+            </Popconfirm>
+          ) : null
+      },
+    ];
+
     this.state = {
+      hasSubjects: true,
       dataSource: [
         {
           key: "0",
           subject_cod: "1234567",
           subject_name: "Materia inventada",
-          dedication_hours: "",
-          autonomous_hours: "",
-          accompaniment: ""
-        },
-        {
-          key: "1",
-          subject_cod: "8901234",
-          subject_name: "Materia inventada 2",
           dedication_hours: "",
           autonomous_hours: "",
           accompaniment: ""
@@ -139,8 +195,30 @@ class SubjectsForm extends React.Component {
         }
       })
       .catch(error => {
-        console.log(error);
+        this.setState({
+          hasSubjects: false,
+        });
       });
+  }
+
+  handleAddOne = () => {
+    var newItem = {
+      key: this.state.dataSource.length,
+      subject_cod: "",
+      subject_name: "",
+      dedication_hours: "",
+      autonomous_hours: "",
+      accompaniment: ""
+    };
+    var updatedColumns = this.state.dataSource.concat(newItem);
+    this.setState({
+      dataSource: updatedColumns
+    })  
+  }
+
+  handleDeleteOne = key => {
+    const dataSource = [...this.state.dataSource];
+    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
 
   render() {
@@ -181,6 +259,8 @@ class SubjectsForm extends React.Component {
             </ul>
           </Col>
         </Row>
+
+        {this.state.hasSubjects ? //Form when you can retrieve subjects:
         <Row type="flex" justify="center">
           <Col span={20}>
             <Table
@@ -190,7 +270,34 @@ class SubjectsForm extends React.Component {
               size="small"
             />
           </Col>
-        </Row>
+          </Row>
+          : //Form (of new subjects) when you can NOT retrieve subjects:
+          <div>
+            <Row type="flex">
+            <Col span={2} />
+            <PrimButton>
+              <Button
+                onClick={this.handleAddOne}
+                type="primary"
+                style={{ marginBottom: 16 }}
+                icon="plus-circle"
+              >
+                {`Añadir materia`}
+                </Button>
+              </PrimButton>
+          </Row>
+            <Row type="flex" justify="center">
+            <Col span={20}>
+            <Table
+              columns={this.columnsNew}
+              dataSource={this.state.dataSource}
+              bordered
+              size="small"
+            />
+          </Col>
+            </Row>
+            </div>
+          }
 
         <Row type="flex" justify="center" gutter={16}>
           <Col>

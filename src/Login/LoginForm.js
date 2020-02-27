@@ -4,7 +4,7 @@ import "./Login.css";
 import { Form, Icon, Input, Button } from "antd";
 import { withRouter } from "react-router-dom";
 
-import auth from "../auth";
+import auth from "../Routes/auth";
 
 class LoginForm extends React.Component {
   handleSubmit = e => {
