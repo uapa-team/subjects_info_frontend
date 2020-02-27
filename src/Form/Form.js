@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Table, InputNumber, Button, Row, Col, Popconfirm, Icon } from "antd";
+import { Form, Table, InputNumber, Input, Button, Row, Col, Popconfirm, Icon } from "antd";
 import auth from "../Routes/auth";
 import { withRouter } from "react-router-dom";
 import { PrimButton } from "./PrimButton";
@@ -11,13 +11,11 @@ class SubjectsForm extends React.Component {
     this.columns = [
       {
         title: "Código de la materia",
-        dataIndex: "subject_cod",
-        key: "subject_cod"
+        dataIndex: "code",
       },
       {
         title: "Nombre de la materia",
-        dataIndex: "subject_name",
-        key: "subject_name"
+        dataIndex: "name",
       },
       {
         title: "Número de horas de dedicación presencial",
@@ -57,45 +55,31 @@ class SubjectsForm extends React.Component {
     this.columnsNew = [
       {
         title: "Nombre de la materia",
-        dataIndex: "subject_name",
+        dataIndex: "name",
         render: (record, text) => (
-          <InputNumber
-            min={0}
+          <Input
             style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "subject_name")}
+            onChange={e => this.handleAdd(e, record, text, "name")}
           />
         )
       },
       {
-        title: "Número de horas de dedicación presencial",
-        dataIndex: "dedication_hours",
+        title: "Código de la materia",
+        dataIndex: "code",
         render: (record, text) => (
-          <InputNumber
-            min={0}
+          <Input
             style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "dedication_hours")}
+            onChange={e => this.handleAdd(e, record, text, "code")}
           />
         )
       },
       {
-        title: "Número de horas de trabajo autónomo",
-        dataIndex: "autonomous_hours",
-        render: (record, text, dataIndex) => (
-          <InputNumber
-            min={0}
+        title: "Grupo",
+        dataIndex: "group",
+        render: (record, text) => (
+          <Input
             style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "autonomous_hours")}
-          />
-        )
-      },
-      {
-        title: "Número de horas de acompañamiento",
-        dataIndex: "accompaniment",
-        render: (record, text, dataIndex) => (
-          <InputNumber
-            min={0}
-            style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "accompaniment")}
+            onChange={e => this.handleAdd(e, record, text, "group")}
           />
         )
       },
@@ -122,15 +106,15 @@ class SubjectsForm extends React.Component {
       hasSubjects: true,
       dataSource: [
         {
-          key: "0",
-          subject_cod: "1234567",
-          subject_name: "Materia inventada",
+          key: 0,
+          code: "",
+          name: "",
+          group: "",
           dedication_hours: "",
           autonomous_hours: "",
           accompaniment: ""
         }
       ],
-      count: 1
     };
   }
 
@@ -143,9 +127,52 @@ class SubjectsForm extends React.Component {
     this.data = newData;
   };
 
+  handleAddOne = () => {
+    var newItem = {
+      key: this.state.dataSource.length,
+      code: "",
+      name: "",
+      group: ""
+    };
+    var updatedColumns = this.state.dataSource.concat(newItem);
+    this.setState({
+      dataSource: updatedColumns
+    })  
+  }
+
+  handleDeleteOne = key => {
+    const dataSource = [...this.state.dataSource];
+    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
+  }
+
   submitInfo = () => {
     console.log(this.state.dataSource);
     fetch("http://localhost:8000/subjects_hours/submit_form", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Token " + localStorage.getItem("jwt")
+      },
+      body: JSON.stringify({
+        subjects: this.state.dataSource
+      })
+    })
+      .then(response => {
+        window.alert("¡Muchas gracias!");
+        auth.logout(() => {
+          localStorage.clear();
+          this.props.history.push("/");
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  createSchedule = () => {
+    console.log(this.state.dataSource);
+    fetch("http://localhost:8000/subjects_hours/create_schedule", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -199,26 +226,6 @@ class SubjectsForm extends React.Component {
           hasSubjects: false,
         });
       });
-  }
-
-  handleAddOne = () => {
-    var newItem = {
-      key: this.state.dataSource.length,
-      subject_cod: "",
-      subject_name: "",
-      dedication_hours: "",
-      autonomous_hours: "",
-      accompaniment: ""
-    };
-    var updatedColumns = this.state.dataSource.concat(newItem);
-    this.setState({
-      dataSource: updatedColumns
-    })  
-  }
-
-  handleDeleteOne = key => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
 
   render() {
@@ -306,7 +313,7 @@ class SubjectsForm extends React.Component {
             </Button>
           </Col>
           <Col>
-            <Button onClick={this.submitInfo} type="primary" style={{}}>
+            <Button onClick={this.state.hasSubjects ? this.submitInfo : this.createSchedule} type="primary" style={{}}>
               Terminar
             </Button>
           </Col>
