@@ -7,15 +7,31 @@ import { PrimButton } from "./PrimButton";
 class SubjectsForm extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      hasSubjects: true,
+      dataSource: [
+        {
+          key: 0,
+          subject_cod: "",
+          subject_name: "",
+          group: "",
+          dedication_hours: "",
+          autonomous_hours: "",
+          accompaniment: ""
+        }
+      ],
+    };
+
     this.data = [];
     this.columns = [
       {
         title: "Código de la materia",
-        dataIndex: "code",
+        dataIndex: "subject_cod",
       },
       {
         title: "Nombre de la materia",
-        dataIndex: "name",
+        dataIndex: "subject_name",
       },
       {
         title: "Número de horas de dedicación presencial",
@@ -55,21 +71,21 @@ class SubjectsForm extends React.Component {
     this.columnsNew = [
       {
         title: "Nombre de la materia",
-        dataIndex: "name",
+        dataIndex: "subject_name",
         render: (record, text) => (
           <Input
             style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "name")}
+            onChange={e => this.handleAdd(e, record, text, "subject_name")}
           />
         )
       },
       {
         title: "Código de la materia",
-        dataIndex: "code",
+        dataIndex: "subject_cod",
         render: (record, text) => (
           <Input
             style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "code")}
+            onChange={e => this.handleAdd(e, record, text, "subject_cod")}
           />
         )
       },
@@ -101,21 +117,6 @@ class SubjectsForm extends React.Component {
           ) : null
       },
     ];
-
-    this.state = {
-      hasSubjects: true,
-      dataSource: [
-        {
-          key: 0,
-          code: "",
-          name: "",
-          group: "",
-          dedication_hours: "",
-          autonomous_hours: "",
-          accompaniment: ""
-        }
-      ],
-    };
   }
 
   handleAdd = (e, record, text, type) => {
@@ -130,8 +131,8 @@ class SubjectsForm extends React.Component {
   handleAddOne = () => {
     var newItem = {
       key: this.state.dataSource.length,
-      code: "",
-      name: "",
+      subject_cod: "",
+      subject_name: "",
       group: ""
     };
     var updatedColumns = this.state.dataSource.concat(newItem);
@@ -214,7 +215,7 @@ class SubjectsForm extends React.Component {
       .then(res => res.json())
       .then(response => {
         if (response.subjects.length === 0) {
-          this.props.history.push("/schedule");
+          //Let hasSubjects False
         } else {
           this.setState({
             dataSource: response.subjects
