@@ -130,7 +130,7 @@ class SubjectsForm extends React.Component {
           accompaniment: ""
         }
       ],
-      count: 2
+      count: 1
     };
   }
 
