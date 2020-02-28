@@ -1,8 +1,10 @@
 import React from "react";
-import { Form, Table, InputNumber, Input, Button, Row, Col, Popconfirm, Icon } from "antd";
+import { Form, Table, InputNumber, Input, Button, Row, Col, Popconfirm, Icon, Select } from "antd";
 import auth from "../Routes/auth";
 import { withRouter } from "react-router-dom";
 import { PrimButton } from "./PrimButton";
+
+const { Option } = Select;
 
 class SubjectsForm extends React.Component {
   constructor(props) {
@@ -77,10 +79,9 @@ class SubjectsForm extends React.Component {
           <Select
           showSearch
           placeholder="Por favor, escriba el nombre de la materia"
-          key="subject_name"
           style={{ width: "100%" }}
           onChange={e => this.handleAdd(e, record, text, "subject_name")}
-          onBlur={e => this.autofillName(e.target.value)}
+          onBlur={e => this.autofillName(e)}
           filterOption={(input, option) =>
             option.props.children
               .toLowerCase()
@@ -166,16 +167,18 @@ class SubjectsForm extends React.Component {
   }
 
   autofillName = name => {
-    fetch("http://localhost:8000/subjects_hours/subjects", {
-      method: "GET",
+    var nico = JSON.stringify({subject_name: name})
+    console.log(nico)
+    fetch("http://localhost:8000/subjects_hours/get_code", {
+      method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: "Token " + localStorage.getItem("jwt")
       },
-      body :{
-        name : name
-      }
+      body : JSON.stringify({
+        subject_name: name
+      })
     }).then(response => {
       if (response.status === 200) {
         return response.json();
@@ -194,8 +197,8 @@ class SubjectsForm extends React.Component {
 
   selectItemCase = i => {
     return (
-      <Option value={i.code} key={i.code}>
-        {i.name}
+      <Option value={i.subject_cod} key={i.subject_cod}>
+        {i.subject_name}
       </Option>
     );
   };
@@ -347,6 +350,7 @@ class SubjectsForm extends React.Component {
           <Col span={20}>
             <Table
               columns={this.columns}
+              rowKey="subject_cod"
               dataSource={this.state.dataSource}
               bordered
               size="small"
