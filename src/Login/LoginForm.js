@@ -41,7 +41,6 @@ class LoginForm extends React.Component {
             },
             response => {
               console.log(response.status);
-              console.log("F");
             }
           )
           .catch(error => {

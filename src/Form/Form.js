@@ -10,6 +10,7 @@ class SubjectsForm extends React.Component {
 
     this.state = {
       hasSubjects: true,
+      allSubjects: [],
       dataSource: [
         {
           key: 0,
@@ -73,17 +74,35 @@ class SubjectsForm extends React.Component {
         title: "Nombre de la materia",
         dataIndex: "subject_name",
         render: (record, text) => (
-          <Input
-            style={{ width: "100%" }}
-            onChange={e => this.handleAdd(e, record, text, "subject_name")}
-          />
+          <Select
+          showSearch
+          placeholder="Por favor, escriba el nombre de la materia"
+          key="subject_name"
+          style={{ width: "100%" }}
+          onChange={e => this.handleAdd(e, record, text, "subject_name")}
+          onBlur={e => this.autofillName(e.target.value)}
+          filterOption={(input, option) =>
+            option.props.children
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .indexOf(
+                input
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+              ) >= 0
+          }
+          >
+            {this.menuJSSubjects()}
+          </ Select>
         )
       },
       {
         title: "Código de la materia",
         dataIndex: "subject_cod",
         render: (record, text) => (
-          <Input
+          <p
             style={{ width: "100%" }}
             onChange={e => this.handleAdd(e, record, text, "subject_cod")}
           />
@@ -146,6 +165,41 @@ class SubjectsForm extends React.Component {
     this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
 
+  autofillName = name => {
+    fetch("http://localhost:8000/subjects_hours/subjects", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Token " + localStorage.getItem("jwt")
+      },
+      body :{
+        name : name
+      }
+    }).then(response => {
+      if (response.status === 200) {
+        return response.json();
+      } else {
+        return { subject_cod : "" };
+      }
+    })
+    .then(data => {
+      this.props.form.setFieldsValue({ subject_cod: data.subject_cod });
+    });
+  };
+
+  menuJSSubjects = () => {
+    return this.state.allSubjects.map(this.selectItemCase);
+  };
+
+  selectItemCase = i => {
+    return (
+      <Option value={i.code} key={i.code}>
+        {i.name}
+      </Option>
+    );
+  };
+
   submitInfo = () => {
     console.log(this.state.dataSource);
     fetch("http://localhost:8000/subjects_hours/submit_form", {
@@ -203,6 +257,22 @@ class SubjectsForm extends React.Component {
     });
   };
 
+  retrieveSubjects = () => {
+    fetch("http://localhost:8000/subjects_hours/subjects", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Token " + localStorage.getItem("jwt")
+      }
+    }).then(response => response.json())
+    .then(r => {
+      this.setState({
+        allSubjects: r.subjects
+      })
+    })
+  }
+
   componentDidMount() {
     fetch("http://localhost:8000/subjects_hours/get_schedule", {
       method: "GET",
@@ -215,7 +285,10 @@ class SubjectsForm extends React.Component {
       .then(res => res.json())
       .then(response => {
         if (response.subjects.length === 0) {
-          //Let hasSubjects False
+          this.setState({
+            hasSubjects: false,
+          });
+          this.retrieveSubjects();
         } else {
           this.setState({
             dataSource: response.subjects
@@ -226,6 +299,7 @@ class SubjectsForm extends React.Component {
         this.setState({
           hasSubjects: false,
         });
+        this.retrieveSubjects();
       });
   }
 
