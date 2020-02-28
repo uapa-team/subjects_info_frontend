@@ -17,7 +17,7 @@ class SubjectsForm extends React.Component {
         {
           key: 0,
           subject_cod: "",
-          subject_name: "",
+          subject_name: "Lecto-Escritura",
           group: "",
           dedication_hours: "",
           autonomous_hours: "",
@@ -70,7 +70,7 @@ class SubjectsForm extends React.Component {
         )
       }
     ];
-
+  
     this.columnsNew = [
       {
         title: "Nombre de la materia",
@@ -81,7 +81,7 @@ class SubjectsForm extends React.Component {
           placeholder="Por favor, escriba el nombre de la materia"
           style={{ width: "100%" }}
           onChange={e => this.handleAdd(e, record, text, "subject_name")}
-          onBlur={e => this.autofillName(e)}
+          onBlur={() => console.log(text)}
           filterOption={(input, option) =>
             option.props.children
               .toLowerCase()
@@ -95,7 +95,7 @@ class SubjectsForm extends React.Component {
               ) >= 0
           }
           >
-            {this.menuJSSubjects()}
+            {this.menuJS(true)}
           </ Select>
         )
       },
@@ -103,11 +103,13 @@ class SubjectsForm extends React.Component {
         title: "Código de la materia",
         dataIndex: "subject_cod",
         render: (record, text) => (
-          <p
+          <Select
             style={{ width: "100%" }}
             onChange={e => this.handleAdd(e, record, text, "subject_cod")}
-          />
-        )
+          >
+            {this.menuJS(false)}
+            </ Select>
+          )
       },
       {
         title: "Grupo",
@@ -166,34 +168,22 @@ class SubjectsForm extends React.Component {
     this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
 
-  autofillName = name => {
-    var nico = JSON.stringify({subject_name: name})
-    console.log(nico)
-    fetch("http://localhost:8000/subjects_hours/get_code", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: "Token " + localStorage.getItem("jwt")
-      },
-      body : JSON.stringify({
-        subject_name: name
-      })
-    }).then(response => {
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        return { subject_cod : "" };
-      }
-    })
-    .then(data => {
-      this.props.form.setFieldsValue({ subject_cod: data.subject_cod });
-    });
+  menuJS = conditional => {
+    if(conditional){
+      return this.state.allSubjects.map(this.selectItemCase);
+    } else {
+      return this.state.allSubjects.map(this.selectItemCaseCodes);
+    }
   };
 
-  menuJSSubjects = () => {
-    return this.state.allSubjects.map(this.selectItemCase);
+  selectItemCaseCodes = i => {
+    return (
+      <Option value={i.subject_cod} key={i.subject_cod}>
+        {i.subject_cod}
+      </Option>
+    );
   };
+
 
   selectItemCase = i => {
     return (
