@@ -17,7 +17,7 @@ class SubjectsForm extends React.Component {
         {
           key: 0,
           subject_cod: "",
-          subject_name: "Lecto-Escritura",
+          subject_name: "",
           group: "",
           dedication_hours: "",
           autonomous_hours: "",
@@ -25,7 +25,7 @@ class SubjectsForm extends React.Component {
         }
       ],
     };
-
+    
     this.data = [];
     this.columns = [
       {
@@ -69,7 +69,7 @@ class SubjectsForm extends React.Component {
           />
         )
       }
-    ];
+    ];    
   
     this.columnsNew = [
       {
@@ -81,7 +81,7 @@ class SubjectsForm extends React.Component {
           placeholder="Por favor, escriba el nombre de la materia"
           style={{ width: "100%" }}
           onChange={e => this.handleAdd(e, record, text, "subject_name")}
-          onBlur={() => console.log(text)}
+          //onBlur={e => }
           filterOption={(input, option) =>
             option.props.children
               .toLowerCase()
@@ -93,22 +93,20 @@ class SubjectsForm extends React.Component {
                   .normalize("NFD")
                   .replace(/[\u0300-\u036f]/g, "")
               ) >= 0
-          }
-          >
-            {this.menuJS(true)}
-          </ Select>
+          }>
+            {this.menuJS()}
+          </Select>
         )
       },
       {
         title: "Código de la materia",
         dataIndex: "subject_cod",
         render: (record, text) => (
-          <Select
+          <Input
+            disabled
             style={{ width: "100%" }}
             onChange={e => this.handleAdd(e, record, text, "subject_cod")}
-          >
-            {this.menuJS(false)}
-            </ Select>
+          />
           )
       },
       {
@@ -133,7 +131,6 @@ class SubjectsForm extends React.Component {
               cancelText="No"
               onConfirm={() => this.handleDeleteOne(record.key)}
             >
-              {/* eslint-disable-next-line */}
               <Icon type="delete" />
             </Popconfirm>
           ) : null
@@ -142,7 +139,6 @@ class SubjectsForm extends React.Component {
   }
 
   handleAdd = (e, record, text, type) => {
-    //console.log(e)
     const newData = [...this.state.dataSource];
     const oldData = text;
     oldData[type] = e;
@@ -168,12 +164,8 @@ class SubjectsForm extends React.Component {
     this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
 
-  menuJS = conditional => {
-    if(conditional){
+  menuJS = () => {
       return this.state.allSubjects.map(this.selectItemCase);
-    } else {
-      return this.state.allSubjects.map(this.selectItemCaseCodes);
-    }
   };
 
   selectItemCaseCodes = i => {
@@ -184,7 +176,6 @@ class SubjectsForm extends React.Component {
     );
   };
 
-
   selectItemCase = i => {
     return (
       <Option value={i.subject_cod} key={i.subject_cod}>
@@ -194,7 +185,6 @@ class SubjectsForm extends React.Component {
   };
 
   submitInfo = () => {
-    console.log(this.state.dataSource);
     fetch("http://localhost:8000/subjects_hours/submit_form", {
       method: "POST",
       headers: {
@@ -207,6 +197,7 @@ class SubjectsForm extends React.Component {
       })
     })
       .then(response => {
+        console.log(this.state.dataSource)
         window.alert("¡Muchas gracias!");
         auth.logout(() => {
           localStorage.clear();
@@ -219,7 +210,6 @@ class SubjectsForm extends React.Component {
   };
 
   createSchedule = () => {
-    console.log(this.state.dataSource);
     fetch("http://localhost:8000/subjects_hours/create_schedule", {
       method: "POST",
       headers: {
@@ -260,6 +250,7 @@ class SubjectsForm extends React.Component {
       }
     }).then(response => response.json())
     .then(r => {
+      console.log(r.subjects)
       this.setState({
         allSubjects: r.subjects
       })

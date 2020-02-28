@@ -1,7 +1,7 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "./Login.css";
-import { Form, Icon, Input, Button } from "antd";
+import { Form, Icon, Input, Button, message } from "antd";
 import { withRouter } from "react-router-dom";
 
 import auth from "../Routes/auth";
@@ -11,7 +11,6 @@ class LoginForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
         fetch("http://localhost:8000/subjects_hours/login", {
           method: "POST",
           headers: {
@@ -26,9 +25,9 @@ class LoginForm extends React.Component {
           .then(
             async response => {
               if (response.status === 404) {
-                console.log("Contraseña incorrecta.");
+                message.error("Contraseña incorrecta.");
               } else if (response.status === 200) {
-                console.log("Inicio de sesión exitoso.");
+                message.success("Inicio de sesión exitoso.");
                 let res = await response.json();
                 localStorage.setItem("name", res["name"]);
                 localStorage.setItem("jwt", res["token"]);
